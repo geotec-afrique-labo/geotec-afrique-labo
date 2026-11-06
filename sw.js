@@ -1,7 +1,7 @@
 /* Service worker du lanceur GEOTEC : garde la page du lanceur pour l'ouvrir sans attendre (et hors ligne).
    Les applications Apps Script ne passent pas par ici : elles viennent toujours de Google, à jour.
    Changer VERSION après une modification de index.html ou des icônes. applications.js est toujours relu sur Internet quand c'est possible. */
-var VERSION = 'geotec-lanceur-2026-11-06b';
+var VERSION = 'geotec-lanceur-2026-11-06d';
 var FICHIERS = ['./', 'index.html', 'applications.js', 'manifest.webmanifest',
   'icones/logo.png', 'icones/icone-192.png', 'icones/icone-512.png', 'icones/icone-masquable-512.png', 'icones/favicon-32.png', 'icones/apple-touch-icon.png'];
 
@@ -13,6 +13,17 @@ self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (cles) {
     return Promise.all(cles.filter(function (k) { return k !== VERSION; }).map(function (k) { return caches.delete(k); }));
   }).then(function () { return self.clients.claim(); }));
+});
+
+/* toucher la notification « fiches de l'ingénierie » : revient au lanceur et ouvre la liste des fiches à prendre en charge */
+self.addEventListener('notificationclick', function (e) {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (liste) {
+    for (var i = 0; i < liste.length; i++) {
+      if (liste[i].url.indexOf(self.registration.scope) === 0) { liste[i].postMessage({ geotec: 'alerte' }); return liste[i].focus(); }
+    }
+    return self.clients.openWindow('./?app=alerte');
+  }));
 });
 
 self.addEventListener('fetch', function (e) {

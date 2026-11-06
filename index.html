@@ -68,6 +68,22 @@ dialog .aide{font-size:12.5px;color:var(--gris-cl);margin-top:6px}
 dialog .act{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
 dialog .act button{border:1px solid var(--bord);background:var(--blanc);border-radius:9px;padding:8px 16px}
 dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:#fff}
+
+/* ---------- alerte : fiches de l'ingénierie à prendre en charge ---------- */
+.tuile{position:relative}
+.tuile .compteur{position:absolute;top:-7px;right:-7px;min-width:26px;height:26px;padding:0 7px;border-radius:13px;background:#d92d20;color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center;box-shadow:0 2px 6px rgba(217,45,32,.4);animation:pulse 1.6s ease-in-out infinite}
+.tuile.en-alerte{border-color:#f3a5a0;background:#fffafa}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+#bandeauAlerte{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff1ef;border:1px solid #f3b8b3;color:#8c1d14;border-radius:12px;padding:12px 14px;margin-bottom:14px;animation:entre .25s ease-out}
+#bandeauAlerte .txt{flex:1;min-width:200px}
+#bandeauAlerte b{font-size:15.5px}
+#bandeauAlerte button{border:0;background:#d92d20;color:#fff;border-radius:9px;padding:9px 16px;font-weight:600}
+@keyframes entre{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.cloche{position:relative}
+.cloche .nb{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#d92d20;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+#barre #btAlerteBarre{color:#d92d20;font-weight:600}
+dialog .case{display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:13.5px;color:var(--gris)}
+dialog .case input{margin-top:3px}
 </style>
 </head>
 <body>
@@ -76,12 +92,16 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
   <header>
     <img src="icones/logo.png" alt="GEOTEC AFRIQUE">
     <div class="t"><b>Applications du laboratoire</b><small id="sousTitre">Touchez une application pour l’ouvrir</small></div>
+    <button class="icone-bt cloche" id="btAlerte" title="Fiches de l’ingénierie à prendre en charge" aria-label="Alertes" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="nb" id="nbAlerte"></span>
+    </button>
     <button class="icone-bt" id="btReglages" title="Réglages de cette tablette" aria-label="Réglages">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </header>
   <main>
     <div id="horsLigne" hidden>Pas de connexion Internet : les applications s’ouvriront dès le retour du réseau.</div>
+    <div id="bandeauAlerte" hidden><span class="txt" id="texteAlerte"></span><button id="btPrendre" type="button">Voir les fiches</button></div>
     <div id="tuiles"></div>
     <p class="note">GEOTEC AFRIQUE — Laboratoire · connexion avec votre nom et votre code dans chaque application</p>
   </main>
@@ -93,6 +113,9 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span class="lib">Applications</span>
     </button>
     <div class="titre" id="titreApp"></div>
+    <button id="btAlerteBarre" title="Fiches de l’ingénierie à prendre en charge" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span id="nbAlerteBarre"></span><span class="lib"> fiche(s)</span>
+    </button>
     <button id="btRecharger" title="Recharger l’application">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span class="lib">Recharger</span>
     </button>
@@ -116,6 +139,14 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
     <label for="demarrage">Au démarrage du lanceur</label>
     <select id="demarrage"></select>
     <div class="aide">Pour une tablette réservée à un poste (par exemple la presse), choisissez son application : elle s’ouvrira directement.</div>
+    <label for="modeAlerte">Alerte « fiches de l’ingénierie à prendre en charge »</label>
+    <select id="modeAlerte">
+      <option value="son">Pastille, son et vibration</option>
+      <option value="notif">Pastille, son, vibration et notification Android</option>
+      <option value="badge">Pastille seulement (silencieux)</option>
+      <option value="non">Aucune alerte sur cette tablette</option>
+    </select>
+    <div class="aide">L’alerte est vérifiée chaque minute tant que le lanceur est ouvert. La notification Android demande votre accord la première fois.</div>
     <div class="act"><button value="annuler">Annuler</button><button value="ok" class="ok">Enregistrer</button></div>
   </form>
 </dialog>
@@ -138,9 +169,10 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
   function base(url) { var m = /\/macros\/(?:[^?#]*\/)?s\/([\w-]+)\//.exec(String(url || '')); return m ? m[1] : '?' + url; }
 
   /* ---------- tuiles ---------- */
-  var zone = $('tuiles');
+  var zone = $('tuiles'), tuiles = {};
   APPS.forEach(function (a) {
     var b = document.createElement('button');
+    tuiles[a.id] = b;
     b.className = 'tuile'; b.type = 'button';
     var p = document.createElement('span'); p.className = 'p'; p.textContent = a.sigle || a.nom.slice(0, 2).toUpperCase();
     var t = document.createElement('span');
@@ -173,10 +205,11 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
         $('cadres').appendChild(f);
       }
       debutChargement(f);
-      f.src = avecCadre(url || a.url);
+      charger(f, avecCadre(url || a.url));
     } else if (f.dataset.pret) finChargement(); else debutChargement(f);
     $('accueil').hidden = true; $('vue').hidden = false;
     if (historique) history.pushState({ app: id }, '', '#' + id);
+    afficherAlerte();
   }
   /* écran d'attente jusqu'au message « prête » envoyé par l'application (Code.gs, ?cadre=1) */
   function debutChargement(f) {
@@ -195,6 +228,8 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
     }
     return '';
   }
+  /* changement de page décidé par le lanceur (heure notée : le message « recharger » de l'ancienne page est alors ignoré) */
+  function charger(f, url) { f.dataset.t = String(Date.now()); f.src = url; }
   function finChargement() { clearTimeout(minuterie); $('chargement').hidden = true; }
   function accueil(historique) {
     courante = null; finChargement();
@@ -202,6 +237,8 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
     document.title = 'GEOTEC Laboratoire';
     Object.keys(cadres).forEach(function (k) { cadres[k].hidden = true; });
     if (historique) history.pushState({}, '', location.pathname + location.search);
+    afficherAlerte();
+    verifierAlertes();
   }
 
   $('btRetour').addEventListener('click', function () {
@@ -210,7 +247,7 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
   $('btRecharger').addEventListener('click', function () {
     if (!courante) return;
     var f = cadres[courante.id];
-    if (f) { debutChargement(f); f.src = avecCadre(courante.url); }
+    if (f) { debutChargement(f); charger(f, avecCadre(courante.url)); }
   });
   $('btChrome').addEventListener('click', function () { if (courante) window.open(courante.url, '_blank'); });
   $('btMasquer').addEventListener('click', finChargement);
@@ -232,6 +269,15 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
       if (courante && courante.id === id) finChargement();
       return;
     }
+    /* l'application se recharge elle-même (Quitter, session expirée) : dans le cadre Google la page resterait blanche,
+       on la rouvre donc depuis le lanceur (sauf si c'est le lanceur qui vient lui-même de changer la page) */
+    if (m.geotec === 'recharger') {
+      var fr = cadres[id];
+      if (Date.now() - Number(fr.dataset.t || 0) < 4000) return;
+      if (courante && courante.id === id) debutChargement(fr); else delete fr.dataset.pret;
+      charger(fr, fr.src);
+      return;
+    }
     if (m.geotec !== 'ouvrir' || typeof m.url !== 'string' || !courante || courante.id !== id) return;
     /* Google peut donner à l'application une autre adresse que celle du lanceur (getService().getUrl()) :
        on garde l'adresse connue du lanceur et on ne reprend que le module demandé */
@@ -250,10 +296,16 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
     .forEach(function (a) { var o = document.createElement('option'); o.value = a.id; o.textContent = a.nom; sel.appendChild(o); });
   $('btReglages').addEventListener('click', function () {
     sel.value = parId(lire(CLE_DEMARRAGE)) ? lire(CLE_DEMARRAGE) : '';
+    $('modeAlerte').value = mode();
     if ($('reglages').showModal) $('reglages').showModal();
   });
   $('reglages').addEventListener('close', function () {
-    if ($('reglages').returnValue === 'ok') ecrire(CLE_DEMARRAGE, sel.value);
+    if ($('reglages').returnValue === 'ok') {
+      ecrire(CLE_DEMARRAGE, sel.value);
+      ecrire(CLE_MODE, $('modeAlerte').value);
+      if ($('modeAlerte').value === 'notif' && window.Notification && Notification.permission === 'default') Notification.requestPermission().catch(function () { });
+      afficherAlerte(); verifierAlertes();
+    }
     afficherSousTitre();
   });
   function afficherSousTitre() {
@@ -262,6 +314,104 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
   }
   afficherSousTitre();
 
+  /* ---------- alertes : fiches envoyées par l'ingénierie (applications marquées alerte: true) ----------
+     L'application répond à l'adresse ?alerte=1 par un simple nombre (aucun nom, aucun dossier) : { n, urgentes, modifiees }. */
+  var CLE_MODE = 'geotec_lanceur_alerte', CLE_VU = 'geotec_lanceur_alerte_vu';
+  var ALERTES = APPS.filter(function (a) { return a.alerte && a.cadre !== false; });
+  var etatAlerte = {}, audio = null;
+  function mode() { var m = lire(CLE_MODE); return /^(son|notif|badge|non)$/.test(m) ? m : 'son'; }
+  if (!ALERTES.length) [$('modeAlerte').previousElementSibling, $('modeAlerte'), $('modeAlerte').nextElementSibling].forEach(function (el) { el.hidden = true; });
+  function totalAlertes() { var t = { n: 0, urgentes: 0, modifiees: 0, app: null }; ALERTES.forEach(function (a) { var e = etatAlerte[a.id]; if (e && e.n > 0) { t.n += e.n; t.urgentes += e.urgentes || 0; t.modifiees += e.modifiees || 0; t.app = t.app || a; } }); return t; }
+  function afficherAlerte() {
+    var actif = mode() !== 'non', t = totalAlertes();
+    ALERTES.forEach(function (a) {
+      var b = tuiles[a.id], e = etatAlerte[a.id], n = actif && e ? e.n : 0, c = b.querySelector('.compteur');
+      if (n && !c) { c = document.createElement('span'); c.className = 'compteur'; b.appendChild(c); }
+      if (c) { if (n) c.textContent = n > 99 ? '99+' : String(n); else c.remove(); }
+      b.classList.toggle('en-alerte', !!n);
+    });
+    var n = actif ? t.n : 0;
+    $('btAlerte').hidden = !n; $('nbAlerte').textContent = n;
+    $('bandeauAlerte').hidden = !n;
+    if (n) {
+      $('texteAlerte').innerHTML = '';
+      var b = document.createElement('b'); b.textContent = '🔔 ' + n + (n > 1 ? ' fiches de l’ingénierie à prendre en charge' : ' fiche de l’ingénierie à prendre en charge');
+      $('texteAlerte').appendChild(b);
+      var d = [];
+      if (t.urgentes) d.push(t.urgentes + ' urgente' + (t.urgentes > 1 ? 's' : ''));
+      if (t.modifiees) d.push(t.modifiees + ' modifiée' + (t.modifiees > 1 ? 's' : '') + ' après prise en charge');
+      if (d.length) $('texteAlerte').appendChild(document.createTextNode(' — ' + d.join(', ')));
+    }
+    var dansAlerte = courante && ALERTES.some(function (a) { return a.id === courante.id; });
+    $('btAlerteBarre').hidden = !n || dansAlerte; $('nbAlerteBarre').textContent = n;
+    document.title = (n ? '(' + n + ') ' : '') + (courante ? courante.nom + ' — GEOTEC' : 'GEOTEC Laboratoire');
+    try { if (navigator.setAppBadge) { if (n) navigator.setAppBadge(n); else navigator.clearAppBadge(); } } catch (e) { }
+  }
+  /* son court (deux notes) ; les tablettes n'autorisent le son qu'après un premier toucher sur la page */
+  function sonner() {
+    try {
+      var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+      audio = audio || new C();
+      if (audio.state === 'suspended') audio.resume();
+      [[880, 0], [1175, 0.18]].forEach(function (x) {
+        var o = audio.createOscillator(), g = audio.createGain(), t0 = audio.currentTime + x[1];
+        o.frequency.value = x[0]; o.type = 'sine'; o.connect(g); g.connect(audio.destination);
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.35, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
+        o.start(t0); o.stop(t0 + 0.35);
+      });
+    } catch (e) { }
+  }
+  document.addEventListener('pointerdown', function () { try { if (!audio && (window.AudioContext || window.webkitAudioContext)) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio && audio.state === 'suspended') audio.resume(); } catch (e) { } }, { once: true, capture: true });
+  function prevenir(t) {
+    var m = mode();
+    if (m === 'non' || m === 'badge') return;
+    sonner();
+    try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) { }
+    if (m === 'notif' && window.Notification && Notification.permission === 'granted') {
+      var titre = t.n > 1 ? t.n + ' fiches de l’ingénierie à prendre en charge' : 'Nouvelle fiche de l’ingénierie';
+      var corps = t.urgentes ? t.urgentes + ' urgente(s) — touchez pour ouvrir' : 'Programme d’essais — touchez pour ouvrir';
+      var aff = function (reg) { if (reg && reg.showNotification) return reg.showNotification(titre, { body: corps, icon: 'icones/icone-192.png', badge: 'icones/favicon-32.png', tag: 'geotec-programmes', renotify: true }); var nn = new Notification(titre, { body: corps, icon: 'icones/icone-192.png', tag: 'geotec-programmes' }); nn.onclick = function () { window.focus(); ouvrirAlerte(); }; };
+      try { if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration().then(aff, function () { aff(null); }); else aff(null); } catch (e) { }
+    }
+  }
+  function ouvrirAlerte() {
+    var a = totalAlertes().app || ALERTES[0];
+    if (!a) return;
+    ouvrir(a.id, true, a.url + (a.url.indexOf('?') < 0 ? '?' : '&') + 'vue=attente');
+  }
+  var enCours = false;
+  function verifierAlertes() {
+    if (enCours || !ALERTES.length || mode() === 'non' || navigator.onLine === false) { afficherAlerte(); return; }
+    enCours = true;
+    Promise.all(ALERTES.map(function (a) {
+      return fetch(a.url + (a.url.indexOf('?') < 0 ? '?' : '&') + 'alerte=1&t=' + Date.now(), { credentials: 'omit', cache: 'no-store', redirect: 'follow' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { if (j && typeof j.n === 'number') etatAlerte[a.id] = { n: Math.max(0, j.n | 0), urgentes: j.urgentes | 0, modifiees: j.modifiees | 0, maj: String(j.maj || '') }; })
+        .catch(function () { /* hors ligne ou application non encore déployée : on garde le dernier état */ });
+    })).then(function () {
+      enCours = false;
+      var t = totalAlertes(), cle = t.n + '|' + ALERTES.map(function (a) { return (etatAlerte[a.id] || {}).maj || ''; }).join('|');
+      var vu = lire(CLE_VU);
+      /* nouvelle alerte : plus de fiches, ou une fiche envoyée / modifiée depuis la dernière vérification */
+      if (t.n && cle !== vu) {
+        var avant = Number(String(vu).split('|')[0]) || 0, majAvant = String(vu).split('|').slice(1).join('|');
+        if (t.n > avant || cle.split('|').slice(1).join('|') > majAvant) prevenir(t);
+      }
+      ecrire(CLE_VU, cle);
+      afficherAlerte();
+    });
+  }
+  $('btAlerte').addEventListener('click', ouvrirAlerte);
+  $('btPrendre').addEventListener('click', ouvrirAlerte);
+  $('btAlerteBarre').addEventListener('click', ouvrirAlerte);
+  if (ALERTES.length) {
+    setInterval(verifierAlertes, 60000);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') verifierAlertes(); });
+    window.addEventListener('online', verifierAlertes);
+    /* clic sur la notification Android : le service worker rouvre le lanceur avec #alerte */
+    if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', function (ev) { if (ev.data && ev.data.geotec === 'alerte') ouvrirAlerte(); });
+  }
+
   /* ---------- connexion Internet ---------- */
   function reseau() { $('horsLigne').hidden = navigator.onLine !== false; }
   window.addEventListener('online', reseau); window.addEventListener('offline', reseau); reseau();
@@ -269,7 +419,9 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
   /* ---------- démarrage : ?app=id (raccourci), #id (retour arrière), sinon réglage de la tablette ---------- */
   var demande = (new URLSearchParams(location.search).get('app')) || location.hash.slice(1) || lire(CLE_DEMARRAGE);
   history.replaceState({}, '', location.pathname);
-  if (demande && parId(demande) && parId(demande).cadre !== false) ouvrir(demande, true);
+  if (demande === 'alerte' && ALERTES.length) ouvrirAlerte();
+  else if (demande && parId(demande) && parId(demande).cadre !== false) ouvrir(demande, true);
+  verifierAlertes();
 
   /* fonctionnement hors ligne de la page du lanceur (les applications, elles, ont besoin d'Internet) */
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
