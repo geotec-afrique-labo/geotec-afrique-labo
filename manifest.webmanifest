@@ -1,0 +1,25 @@
+{
+  "name": "GEOTEC Laboratoire",
+  "short_name": "GEOTEC Labo",
+  "description": "Applications tablettes du laboratoire GEOTEC AFRIQUE",
+  "lang": "fr",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone"],
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "icones/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icone-masquable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "IC GTR et granulats", "url": "./?app=icgtr", "icons": [{ "src": "icones/icone-192.png", "sizes": "192x192" }] },
+    { "name": "Essais mécaniques", "url": "./?app=mecaniques", "icons": [{ "src": "icones/icone-192.png", "sizes": "192x192" }] },
+    { "name": "Réception des échantillons", "url": "./?app=reception", "icons": [{ "src": "icones/icone-192.png", "sizes": "192x192" }] },
+    { "name": "Suivi des essais", "url": "./?app=suiviessais", "icons": [{ "src": "icones/icone-192.png", "sizes": "192x192" }] }
+  ]
+}

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GEOTEC Laboratoire</title>
+<meta name="description" content="Lanceur des applications tablettes du laboratoire GEOTEC AFRIQUE">
+<meta name="theme-color" content="#ffffff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GEOTEC Labo">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icones/favicon-32.png">
+<link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
+<style>
+:root{--orange:#ec7723;--orange-f:#c55a11;--orange-cl:#fdf0e6;--gris:#5a6670;--gris-cl:#8a949c;--texte:#1d2733;--fond:#f4f5f7;--bord:#e1e4e8;--blanc:#fff;--barre:40px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--fond);color:var(--texte);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overscroll-behavior:none}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+button{font:inherit;color:inherit;cursor:pointer}
+[hidden]{display:none!important}
+
+/* ---------- écran d'accueil ---------- */
+#accueil{min-height:100%;display:flex;flex-direction:column}
+#accueil header{background:var(--blanc);border-bottom:1px solid var(--bord);display:flex;align-items:center;gap:16px;padding:10px 16px}
+#accueil header img{height:46px;width:auto}
+#accueil header .t{flex:1;min-width:0}
+#accueil header b{display:block;font-size:17px;color:var(--gris)}
+#accueil header small{display:block;color:var(--gris-cl);font-size:12.5px}
+.icone-bt{border:1px solid var(--bord);background:var(--blanc);border-radius:10px;width:42px;height:42px;display:grid;place-items:center;flex:none}
+.icone-bt svg{width:22px;height:22px;stroke:var(--gris)}
+main{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+#tuiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(250px,100%),1fr));gap:12px}
+.tuile{display:flex;align-items:center;gap:14px;text-align:left;background:var(--blanc);border:1px solid var(--bord);border-radius:14px;padding:14px;min-height:84px;transition:border-color .15s,box-shadow .15s}
+.tuile:hover,.tuile:focus-visible{border-color:var(--orange);box-shadow:0 2px 10px rgba(236,119,35,.15);outline:none}
+.tuile:active{background:var(--orange-cl)}
+.tuile .p{flex:none;width:52px;height:52px;border-radius:12px;background:var(--orange-cl);color:var(--orange-f);display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:.02em}
+.tuile .n{display:block;font-weight:600;font-size:15.5px}
+.tuile .d{display:block;color:var(--gris);font-size:13px;margin-top:2px}
+.tuile .ext{display:inline-block;margin-top:4px;font-size:11.5px;color:var(--gris-cl)}
+.note{color:var(--gris-cl);font-size:12.5px;text-align:center;margin-top:22px}
+#horsLigne{background:#fff4d6;border:1px solid #f1d58a;color:#6b5200;border-radius:10px;padding:10px 14px;margin-bottom:14px}
+
+/* ---------- application ouverte ---------- */
+#vue{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--blanc);padding-top:env(safe-area-inset-top)}
+#barre{height:var(--barre);flex:none;display:flex;align-items:center;gap:4px;padding:0 6px;background:var(--blanc);border-bottom:1px solid var(--bord)}
+#barre button{border:0;background:none;height:34px;padding:0 10px;border-radius:8px;display:flex;align-items:center;gap:6px;color:var(--gris);font-size:14px}
+#barre button:active{background:var(--fond)}
+#barre svg{width:18px;height:18px;stroke:currentColor;flex:none}
+#barre .titre{flex:1;min-width:0;text-align:center;font-weight:600;color:var(--texte);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14.5px}
+#cadres{position:relative;flex:1}
+#cadres iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--blanc)}
+#chargement{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--blanc);color:var(--gris);text-align:center;padding:24px}
+.roue{width:34px;height:34px;border:3px solid var(--orange-cl);border-top-color:var(--orange);border-radius:50%;animation:r 0.9s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+#lent{max-width:480px;font-size:13.5px;text-align:left}
+#lent button{margin-top:10px;border:1px solid var(--orange);color:var(--orange-f);background:var(--blanc);border-radius:9px;padding:8px 14px}
+@media (max-width:520px){#barre .lib{display:none}#accueil header{gap:10px}#accueil header img{height:32px}#accueil header b{font-size:15px}}
+
+/* ---------- réglages ---------- */
+dialog{border:0;border-radius:16px;padding:0;width:min(440px,calc(100% - 32px));box-shadow:0 10px 40px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(20,28,36,.45)}
+dialog form{padding:20px}
+dialog h2{margin:0 0 14px;font-size:18px;color:var(--gris)}
+dialog label{display:block;font-size:13.5px;color:var(--gris);margin:12px 0 5px}
+dialog select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--bord);border-radius:9px;background:var(--blanc)}
+dialog .aide{font-size:12.5px;color:var(--gris-cl);margin-top:6px}
+dialog .act{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+dialog .act button{border:1px solid var(--bord);background:var(--blanc);border-radius:9px;padding:8px 16px}
+dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:#fff}
+</style>
+</head>
+<body>
+
+<div id="accueil">
+  <header>
+    <img src="icones/logo.png" alt="GEOTEC AFRIQUE">
+    <div class="t"><b>Applications du laboratoire</b><small id="sousTitre">Touchez une application pour l’ouvrir</small></div>
+    <button class="icone-bt" id="btReglages" title="Réglages de cette tablette" aria-label="Réglages">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </header>
+  <main>
+    <div id="horsLigne" hidden>Pas de connexion Internet : les applications s’ouvriront dès le retour du réseau.</div>
+    <div id="tuiles"></div>
+    <p class="note">GEOTEC AFRIQUE — Laboratoire · connexion avec votre nom et votre code dans chaque application</p>
+  </main>
+</div>
+
+<div id="vue" hidden>
+  <div id="barre">
+    <button id="btRetour" title="Revenir à la liste des applications">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span class="lib">Applications</span>
+    </button>
+    <div class="titre" id="titreApp"></div>
+    <button id="btRecharger" title="Recharger l’application">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span class="lib">Recharger</span>
+    </button>
+  </div>
+  <div id="cadres">
+    <div id="chargement" hidden>
+      <div class="roue"></div>
+      <div>Ouverture de l’application…</div>
+      <div id="lent" hidden>L’application ne répond pas encore. Causes possibles :<br>
+        – connexion Internet lente : patientez ou touchez « Recharger » ;<br>
+        – Google demande de se connecter au compte des tablettes : ouvrez l’application une fois dans Chrome, connectez-vous, puis revenez ici ;<br>
+        – la nouvelle version de l’application n’est pas encore déployée (modification « cadre=1 »).
+        <br><button id="btChrome" type="button">Ouvrir dans Chrome</button> <button id="btMasquer" type="button">Masquer ce message</button></div>
+    </div>
+  </div>
+</div>
+
+<dialog id="reglages">
+  <form method="dialog">
+    <h2>Réglages de cette tablette</h2>
+    <label for="demarrage">Au démarrage du lanceur</label>
+    <select id="demarrage"></select>
+    <div class="aide">Pour une tablette réservée à un poste (par exemple la presse), choisissez son application : elle s’ouvrira directement.</div>
+    <div class="act"><button value="annuler">Annuler</button><button value="ok" class="ok">Enregistrer</button></div>
+  </form>
+</dialog>
+
+<script src="applications.js"></script>
+<script>
+(function () {
+  'use strict';
+  var APPS = (window.GEOTEC_APPLICATIONS || []).filter(function (a) { return a && a.id && a.url; });
+  var CLE_DEMARRAGE = 'geotec_lanceur_demarrage';
+  var $ = function (id) { return document.getElementById(id); };
+  var cadres = {};          /* applications déjà ouvertes : gardées en mémoire pour ne pas perdre la saisie en cours */
+  var courante = null, minuterie = null;
+
+  function lire(cle) { try { return localStorage.getItem(cle) || ''; } catch (e) { return ''; } }
+  function ecrire(cle, v) { try { localStorage.setItem(cle, v); } catch (e) { } }
+  function parId(id) { for (var i = 0; i < APPS.length; i++) if (APPS[i].id === id) return APPS[i]; return null; }
+  function avecCadre(url) { return url + (url.indexOf('?') < 0 ? '?' : '&') + 'cadre=1'; }
+  /* identifiant du déploiement Apps Script (.../macros/s/IDENTIFIANT/exec), le même quelle que soit la forme de l'adresse */
+  function base(url) { var m = /\/macros\/(?:[^?#]*\/)?s\/([\w-]+)\//.exec(String(url || '')); return m ? m[1] : '?' + url; }
+
+  /* ---------- tuiles ---------- */
+  var zone = $('tuiles');
+  APPS.forEach(function (a) {
+    var b = document.createElement('button');
+    b.className = 'tuile'; b.type = 'button';
+    var p = document.createElement('span'); p.className = 'p'; p.textContent = a.sigle || a.nom.slice(0, 2).toUpperCase();
+    var t = document.createElement('span');
+    var n = document.createElement('span'); n.className = 'n'; n.textContent = a.nom;
+    var d = document.createElement('span'); d.className = 'd'; d.textContent = a.detail || '';
+    t.appendChild(n); t.appendChild(d);
+    if (a.cadre === false) { var x = document.createElement('span'); x.className = 'ext'; x.textContent = 'S’ouvre dans Chrome ↗'; t.appendChild(x); }
+    b.appendChild(p); b.appendChild(t);
+    b.addEventListener('click', function () { ouvrir(a.id, true); });
+    zone.appendChild(b);
+  });
+
+  /* ---------- ouverture d'une application ---------- */
+  function ouvrir(id, historique, url) {
+    var a = parId(id);
+    if (!a) return accueil(false);
+    if (a.cadre === false) { window.open(a.url, '_blank'); return; }
+    courante = a;
+    $('titreApp').textContent = a.nom;
+    document.title = a.nom + ' — GEOTEC';
+    Object.keys(cadres).forEach(function (k) { cadres[k].hidden = k !== id; });
+    var f = cadres[id];
+    if (!f || url) {
+      if (!f) {
+        f = document.createElement('iframe');
+        f.title = a.nom;
+        f.setAttribute('allow', 'camera; microphone; geolocation; clipboard-read; clipboard-write; fullscreen; autoplay; web-share');
+        f.setAttribute('allowfullscreen', '');
+        cadres[id] = f;
+        $('cadres').appendChild(f);
+      }
+      debutChargement(f);
+      f.src = avecCadre(url || a.url);
+    } else if (f.dataset.pret) finChargement(); else debutChargement(f);
+    $('accueil').hidden = true; $('vue').hidden = false;
+    if (historique) history.pushState({ app: id }, '', '#' + id);
+  }
+  /* écran d'attente jusqu'au message « prête » envoyé par l'application (Code.gs, ?cadre=1) */
+  function debutChargement(f) {
+    if (f) delete f.dataset.pret;
+    $('chargement').hidden = false; $('lent').hidden = true;
+    clearTimeout(minuterie);
+    minuterie = setTimeout(function () { $('lent').hidden = false; }, 15000);
+  }
+  /* cadre du lanceur qui contient la fenêtre émettrice (la page Apps Script est dans un cadre Google, lui-même dans le nôtre) */
+  function cadreDe(source) {
+    var ids = Object.keys(cadres);
+    for (var w = source, n = 0; w && n < 6; n++) {
+      for (var i = 0; i < ids.length; i++) if (cadres[ids[i]].contentWindow === w) return ids[i];
+      if (w === w.parent) break;
+      w = w.parent;
+    }
+    return '';
+  }
+  function finChargement() { clearTimeout(minuterie); $('chargement').hidden = true; }
+  function accueil(historique) {
+    courante = null; finChargement();
+    $('vue').hidden = true; $('accueil').hidden = false;
+    document.title = 'GEOTEC Laboratoire';
+    Object.keys(cadres).forEach(function (k) { cadres[k].hidden = true; });
+    if (historique) history.pushState({}, '', location.pathname + location.search);
+  }
+
+  $('btRetour').addEventListener('click', function () {
+    if (history.state && history.state.app) history.back(); else accueil(true);
+  });
+  $('btRecharger').addEventListener('click', function () {
+    if (!courante) return;
+    var f = cadres[courante.id];
+    if (f) { debutChargement(f); f.src = avecCadre(courante.url); }
+  });
+  $('btChrome').addEventListener('click', function () { if (courante) window.open(courante.url, '_blank'); });
+  $('btMasquer').addEventListener('click', finChargement);
+  /* bouton Retour d'Android : revient à la liste, puis ferme le lanceur */
+  window.addEventListener('popstate', function () {
+    var id = location.hash.slice(1);
+    if (id && parId(id)) ouvrir(id, false); else accueil(false);
+  });
+
+  /* changement de module demandé par l'application (IC GTR : bouton « Modules » et choix du module) */
+  window.addEventListener('message', function (ev) {
+    var m = ev.data;
+    if (!m || typeof m.geotec !== 'string') return;
+    if (!/(^https:\/\/[\w-]+\.googleusercontent\.com$)|(^https:\/\/script\.google\.com$)/.test(ev.origin)) return;
+    var id = cadreDe(ev.source);
+    if (!id) return;
+    if (m.geotec === 'pret') {
+      cadres[id].dataset.pret = '1';
+      if (courante && courante.id === id) finChargement();
+      return;
+    }
+    if (m.geotec !== 'ouvrir' || typeof m.url !== 'string' || !courante || courante.id !== id) return;
+    if (base(m.url) !== base(courante.url)) return;          /* uniquement une page de la même application */
+    var url = m.url.replace(/([?&])cadre=1(&|$)/, '$1').replace(/[?&]$/, '');
+    ouvrir(courante.id, false, url);
+  });
+
+  /* ---------- réglages de la tablette ---------- */
+  var sel = $('demarrage');
+  [{ id: '', nom: 'Écran d’accueil (liste des applications)' }].concat(APPS.filter(function (a) { return a.cadre !== false; }))
+    .forEach(function (a) { var o = document.createElement('option'); o.value = a.id; o.textContent = a.nom; sel.appendChild(o); });
+  $('btReglages').addEventListener('click', function () {
+    sel.value = parId(lire(CLE_DEMARRAGE)) ? lire(CLE_DEMARRAGE) : '';
+    if ($('reglages').showModal) $('reglages').showModal();
+  });
+  $('reglages').addEventListener('close', function () {
+    if ($('reglages').returnValue === 'ok') ecrire(CLE_DEMARRAGE, sel.value);
+    afficherSousTitre();
+  });
+  function afficherSousTitre() {
+    var d = parId(lire(CLE_DEMARRAGE));
+    $('sousTitre').textContent = d ? 'Au démarrage : ' + d.nom : 'Touchez une application pour l’ouvrir';
+  }
+  afficherSousTitre();
+
+  /* ---------- connexion Internet ---------- */
+  function reseau() { $('horsLigne').hidden = navigator.onLine !== false; }
+  window.addEventListener('online', reseau); window.addEventListener('offline', reseau); reseau();
+
+  /* ---------- démarrage : ?app=id (raccourci), #id (retour arrière), sinon réglage de la tablette ---------- */
+  var demande = (new URLSearchParams(location.search).get('app')) || location.hash.slice(1) || lire(CLE_DEMARRAGE);
+  history.replaceState({}, '', location.pathname);
+  if (demande && parId(demande) && parId(demande).cadre !== false) ouvrir(demande, true);
+
+  /* fonctionnement hors ligne de la page du lanceur (les applications, elles, ont besoin d'Internet) */
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    navigator.serviceWorker.register('sw.js').catch(function () { });
+  }
+})();
+</script>
+</body>
+</html>
