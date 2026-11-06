@@ -1,7 +1,7 @@
 /* Service worker du lanceur GEOTEC : garde la page du lanceur pour l'ouvrir sans attendre (et hors ligne).
    Les applications Apps Script ne passent pas par ici : elles viennent toujours de Google, à jour.
    Changer VERSION après une modification de index.html ou des icônes. applications.js est toujours relu sur Internet quand c'est possible. */
-var VERSION = 'geotec-lanceur-2026-11-06';
+var VERSION = 'geotec-lanceur-2026-11-06b';
 var FICHIERS = ['./', 'index.html', 'applications.js', 'manifest.webmanifest',
   'icones/logo.png', 'icones/icone-192.png', 'icones/icone-512.png', 'icones/icone-masquable-512.png', 'icones/favicon-32.png', 'icones/apple-touch-icon.png'];
 

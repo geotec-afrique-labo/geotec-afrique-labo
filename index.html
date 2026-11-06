@@ -233,9 +233,15 @@ dialog .act button.ok{background:var(--orange);border-color:var(--orange);color:
       return;
     }
     if (m.geotec !== 'ouvrir' || typeof m.url !== 'string' || !courante || courante.id !== id) return;
-    if (base(m.url) !== base(courante.url)) return;          /* uniquement une page de la même application */
-    var url = m.url.replace(/([?&])cadre=1(&|$)/, '$1').replace(/[?&]$/, '');
-    ouvrir(courante.id, false, url);
+    /* Google peut donner à l'application une autre adresse que celle du lanceur (getService().getUrl()) :
+       on garde l'adresse connue du lanceur et on ne reprend que le module demandé */
+    var q = new URLSearchParams((m.url.split('?')[1] || '').split('#')[0]);
+    var garde = new URLSearchParams();
+    /* Google encode parfois la suite de l'adresse (module=ic%26cadre%3d1) : on ne garde que le nom du module */
+    var mod = (q.get('module') || '').split(/[^\w-]/)[0];
+    if (/^[\w-]{1,30}$/.test(mod)) garde.set('module', mod);
+    var s = garde.toString();
+    ouvrir(courante.id, false, base(courante.url) && s ? courante.url + (courante.url.indexOf('?') < 0 ? '?' : '&') + s : courante.url);
   });
 
   /* ---------- réglages de la tablette ---------- */
