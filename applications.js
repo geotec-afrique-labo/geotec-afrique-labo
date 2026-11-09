@@ -24,7 +24,7 @@ var GEOTEC_APPLICATIONS = [
     detail: 'Identification et classification des sols, essais sur granulats',
     url: 'https://script.google.com/macros/s/AKfycbzU7RVKCy8BEsjmXJ0Gi7bZdz6RHWWwfWbsMtVh4HLig7X_xkD4u9PVmiJCLbPB0vIMzA/exec' },
   { id: 'mecaniques', nom: 'Essais mécaniques', sigle: 'MÉC', cadre: true,
-    detail: 'Essais mécaniques, PV et récapitulatifs',
+    detail: 'Sols (oedomètre, cisaillement…) et roches (UCS, Point Load, traction), PV',
     url: 'https://script.google.com/macros/s/AKfycbyBjHghD-uYHrQcFtyUHq_8hZgRl7ElcmTcMdZBZ4sNoLUDekIgL39awbC_5ZbUR_8Paw/exec' },
   { id: 'insitu', nom: 'Essais in situ', sigle: 'ISI', cadre: true,
     detail: 'Essais sur le terrain',

@@ -47,6 +47,7 @@ main{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:20px 16px 40px}
 #barre button{border:0;background:none;height:34px;padding:0 10px;border-radius:8px;display:flex;align-items:center;gap:6px;color:var(--gris);font-size:14px}
 #barre button:active{background:var(--fond)}
 #barre svg{width:18px;height:18px;stroke:currentColor;flex:none}
+#barre .accueil-bt{color:var(--orange-f);font-weight:600;background:var(--orange-cl)}
 #barre .titre{flex:1;min-width:0;text-align:center;font-weight:600;color:var(--texte);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14.5px}
 #cadres{position:relative;flex:1}
 #cadres iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--blanc)}
@@ -109,8 +110,8 @@ dialog .case input{margin-top:3px}
 
 <div id="vue" hidden>
   <div id="barre">
-    <button id="btRetour" title="Revenir à la liste des applications">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span class="lib">Applications</span>
+    <button id="btRetour" class="accueil-bt" title="Revenir directement à l’accueil (liste des applications)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg><span class="lib">Accueil</span>
     </button>
     <div class="titre" id="titreApp"></div>
     <button id="btAlerteBarre" title="Fiches de l’ingénierie à prendre en charge" hidden>
@@ -228,8 +229,14 @@ dialog .case input{margin-top:3px}
     }
     return '';
   }
-  /* changement de page décidé par le lanceur (heure notée : le message « recharger » de l'ancienne page est alors ignoré) */
-  function charger(f, url) { f.dataset.t = String(Date.now()); f.src = url; }
+  /* changement de page décidé par le lanceur (heure notée : le message « recharger » de l'ancienne page est alors ignoré).
+     Dans un cadre déjà chargé, location.replace remplace la page sans ajouter d'étape à l'historique :
+     sinon chaque changement de module ajoutait un « retour » et il fallait toucher Accueil plusieurs fois. */
+  function charger(f, url) {
+    f.dataset.t = String(Date.now()); f.dataset.url = url;
+    if (f.dataset.charge) { try { f.contentWindow.location.replace(url); return; } catch (e) { } }
+    f.dataset.charge = '1'; f.src = url;
+  }
   function finChargement() { clearTimeout(minuterie); $('chargement').hidden = true; }
   function accueil(historique) {
     courante = null; finChargement();
@@ -241,8 +248,15 @@ dialog .case input{margin-top:3px}
     verifierAlertes();
   }
 
+  /* bouton Accueil : une seule touche, quel que soit le nombre de pages ouvertes dans l'application */
   $('btRetour').addEventListener('click', function () {
-    if (history.state && history.state.app) history.back(); else accueil(true);
+    if (!(history.state && history.state.app)) { accueil(true); return; }
+    var avant = courante;
+    history.back();
+    /* si le retour arrière n'a fait que reculer à l'intérieur de l'application, on affiche quand même l'accueil */
+    setTimeout(function () {
+      if (courante && courante === avant) { accueil(false); history.replaceState({}, '', location.pathname + location.search); }
+    }, 400);
   });
   $('btRecharger').addEventListener('click', function () {
     if (!courante) return;
@@ -275,7 +289,7 @@ dialog .case input{margin-top:3px}
       var fr = cadres[id];
       if (Date.now() - Number(fr.dataset.t || 0) < 4000) return;
       if (courante && courante.id === id) debutChargement(fr); else delete fr.dataset.pret;
-      charger(fr, fr.src);
+      charger(fr, fr.dataset.url || fr.src);
       return;
     }
     if (m.geotec !== 'ouvrir' || typeof m.url !== 'string' || !courante || courante.id !== id) return;
