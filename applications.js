@@ -43,7 +43,7 @@ var GEOTEC_APPLICATIONS = [
     url: 'https://script.google.com/macros/s/AKfycbz4W0lCxWFN61ik63F84SzNzqy86FdT9U_bgHNmGe2T5bIWV0GK0x3IqQFRbJgzgOvbLQ/exec' },
   { id: 'suiviessais', nom: 'Suivi des essais', sigle: 'SE', cadre: true,
     detail: 'Avancement des essais par dossier',
-    url: 'https://script.google.com/macros/s/AKfycbyOplE7mCzpaUv-F2QtXBd1mU2IZHo_akDYfAoz5tRFTTL2G_hTUhRFFGM7rH_nPyQaEg/exec' },
+    url: 'https://script.google.com/macros/s/AKfycbxbLxdiUIg-hmjrKeS2ogyQKZ1iZahwU-ewi7tfOEtmo60U-GQIaxSaD-UcU_fAwcZuTg/exec' },
   { id: 'materiel', nom: 'Gestion du matériel', sigle: 'L09', cadre: true,
     detail: 'Sorties et retours du matériel EN-LAB-09',
     url: 'https://script.google.com/macros/s/AKfycbwUZEe1VlrAt_hdo5Sc8kK7DnCydZDdmpl3E-gCQbEfgiOc5km4Ai0-O6rGtYV_D6zv/exec' },
